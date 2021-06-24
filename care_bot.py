@@ -18,6 +18,8 @@ def saving_quotes():
     if not quotes:
         sys.quit()
         print('No quotes to write to file')
+    elif quotes == getting_quotes():
+        print("\n")
     else:
         with open('quotes.txt', 'w') as f:
             f.write('\n'.join(quotes))
@@ -34,8 +36,6 @@ def getting_quotes():
             content = f.readlines()
             f.close()
         quotes = [x.strip() for x in content]
-        print(quotes)
-        print('Quotes are read.')
         return quotes
 
 @client.event
@@ -43,6 +43,8 @@ async def on_ready(): # ready to be used
     print('We have logged in as {0.user}'.format(client))
     global quotes 
     quotes = getting_quotes()
+    # print(quotes)
+    print('Quotes are read.')
 
 @client.event
 async def on_message(message): # receiving messages
