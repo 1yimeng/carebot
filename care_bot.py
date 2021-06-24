@@ -4,16 +4,45 @@ from pickup import text_list
 from dotenv import load_dotenv
 import random
 import funresponses
+import atexit
+import sys 
 
 load_dotenv('TOKEN.env')
 TOKEN = os.getenv('DISCORD_TOKEN')
 client = discord.Client()
 
 love_words = ['love', 'bf', 'gf', 'dating', 'like']
+quotes = []
+
+def saving_quotes():
+    if not quotes:
+        sys.quit()
+        print('No quotes to write to file')
+    else:
+        with open('quotes.txt', 'w') as f:
+            f.write('\n'.join(quotes))
+            f.close()
+        print('\nQuotes written in file.')
+
+def getting_quotes():
+    quotes = []
+    if os.stat('quotes.txt').st_size == 0:
+        print('No quotes in the text file, none read.')
+        return quotes
+    else:
+        with open('quotes.txt', 'r') as f:
+            content = f.readlines()
+            f.close()
+        quotes = [x.strip() for x in content]
+        print(quotes)
+        print('Quotes are read.')
+        return quotes
 
 @client.event
 async def on_ready(): # ready to be used
     print('We have logged in as {0.user}'.format(client))
+    global quotes 
+    quotes = getting_quotes()
 
 @client.event
 async def on_message(message): # receiving messages
@@ -46,6 +75,38 @@ async def on_message(message): # receiving messages
         await message.channel.send(funresponses.joke())
 
     if msg.startswith('-help'):
-        await message.channel.send('**Current available commands:** \n-hello \n-pick me up \n-depression \n-toast \n-roast \n-joke')
+        await message.channel.send('**Current available commands:** \n-hello \n-pick me up \n-depression \n-toast \n-roast \n-joke \n-add quotes [insert quotes] \n-quotes (get random quotes) \n-del quotes \n-del num')
+
+    if msg.startswith('-add quotes'):
+        new_quote = msg.split('-add quotes ', 1)[1]
+        quotes.append(new_quote)
+        await message.channel.send(f'The quote: \'{new_quote}\' is added.')
+    
+    if msg.startswith('-quotes'):
+        if not quotes:
+            await message.channel.send('There is no quote stored D:')
+        else:
+            await message.channel.send(random.choice(quotes))
+    
+    if msg.startswith('-del quotes'):
+        if not quotes:
+            await message.channel.send('There is no quote stored D:')
+        else:    
+            await message.channel.send('The quotes stored are: ')
+            await message.channel.send("\n".join(quotes))
+            await message.channel.send('Enter -del num (quote\'s position\'s number) to delete')
+
+    if msg.startswith('-del num'):
+        if not quotes:
+            await message.channel.send('There is no quote stored D:')
+        else:   
+            index = int(msg.split('-del num ', 1)[1])
+            quotes.remove(quotes[index-1])
+            if not quotes:
+                await message.channel.send('No more quotes!')
+            else:
+                await message.channel.send('The quotes stored are: ')
+                await message.channel.send("\n".join(quotes))
 
 client.run(TOKEN)
+atexit.register(saving_quotes)
