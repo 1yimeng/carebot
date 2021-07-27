@@ -6,6 +6,7 @@ import random
 import funresponses
 import atexit
 import sys 
+from convo_starter import get_convo
 
 load_dotenv('TOKEN.env')
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -121,11 +122,15 @@ async def on_message(message): # receiving messages
         question = in_list[1]
         pure_option = in_list[2:]
         new_option = [option.strip() for option in pure_option]
-        await message.channel.send('**'+ question+ '**')
+        await message.channel.send('**'+ question + '**')
         my_options = []
         for i in range(len(new_option)): 
             my_options.append(emojis[i] + " " + new_option[i])
         await message.channel.send('\n'.join(my_options))
 
+    if msg.startswith('-convo'):
+        my_convo = get_convo()
+        await message.channel.send('**'+ random.choice(my_convo) + '**')
+        
 client.run(TOKEN)
 atexit.register(saving_quotes)
