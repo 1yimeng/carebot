@@ -13,6 +13,7 @@ client = discord.Client()
 
 love_words = ['love', 'bf', 'gf', 'dating', 'like']
 quotes = []
+emojis = ['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣']
 
 def saving_quotes():
     if not quotes:
@@ -48,10 +49,15 @@ async def on_ready(): # ready to be used
 
 @client.event
 async def on_message(message): # receiving messages
-    if message.author == client.user:
-        return
-
     msg = message.content
+    
+    for emoji in emojis:
+        if emoji in msg and message.author.bot:
+            await message.add_reaction(emoji)
+
+    # if message.author == client.user:
+    #     return
+
     if msg.startswith('-hello'):
         await message.channel.send('Wassup I am O\'hare! I am a cool smug rabbit and I also care about you ♥.')
     
@@ -109,6 +115,17 @@ async def on_message(message): # receiving messages
             else:
                 await message.channel.send('The quotes stored are: ')
                 await message.channel.send("\n".join(quotes))
+    
+    if msg.startswith('-poll'):
+        in_list = msg.split(",")
+        question = in_list[1]
+        pure_option = in_list[2:]
+        new_option = [option.strip() for option in pure_option]
+        await message.channel.send('**'+ question+ '**')
+        my_options = []
+        for i in range(len(new_option)): 
+            my_options.append(emojis[i] + " " + new_option[i])
+        await message.channel.send('\n'.join(my_options))
 
 client.run(TOKEN)
 atexit.register(saving_quotes)
