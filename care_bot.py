@@ -6,7 +6,7 @@ import random
 import funresponses
 import atexit
 import sys 
-from convo_starter import get_convo
+from convo_starter import get_convo, get_never_have_I_ever
 
 load_dotenv('TOKEN.env')
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -131,6 +131,9 @@ async def on_message(message): # receiving messages
     if msg.startswith('-convo'):
         my_convo = get_convo()
         await message.channel.send('**'+ random.choice(my_convo) + '**')
+    
+    if msg.startswith('-never-have-i-ever'):
+        await message.channel.send(get_never_have_I_ever())
         
 client.run(TOKEN)
 atexit.register(saving_quotes)

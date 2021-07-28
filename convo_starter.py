@@ -18,3 +18,15 @@ def get_convo():
             convo_starters.append(p.text)
     return convo_starters
 
+def get_never_have_I_ever():
+    URL = 'https://www.generatorslist.com/random/questions/never-have-i-ever'
+
+    response = requests.get(URL)
+    html = response.content
+    soup_convo = BeautifulSoup(html, 'html.parser')
+    divs = soup_convo.find('div', id='results')
+    for div in divs:
+        if isinstance(div, NavigableString):
+            continue
+        return div.text
+
