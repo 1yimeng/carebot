@@ -7,6 +7,7 @@ import funresponses
 import atexit
 import sys 
 from convo_starter import get_convo, get_never_have_I_ever
+from myhoroscope import horoscope
 
 load_dotenv('TOKEN.env')
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -84,7 +85,7 @@ async def on_message(message): # receiving messages
         await message.channel.send(funresponses.joke())
 
     if msg.startswith('-help'):
-        await message.channel.send('**Current available commands:** \n-hello \n-pick me up \n-depression \n-toast \n-roast \n-joke \n-add quotes [insert quotes] \n-quotes (get random quotes) \n-del quotes \n-del num')
+        await message.channel.send('**Current available commands:** \n-hello \n-pick me up \n-depression \n-toast \n-roast \n-joke \n-add quotes [insert quotes] \n-quotes (get random quotes) \n-del quotes \n-del num \n-poll(separate by commas) \n-convo(convo starter) \n-never-have-i-ever \n-horoscope [insert horoscope here]')
 
     if msg.startswith('-add quotes'):
         new_quote = msg.split('-add quotes ', 1)[1]
@@ -135,5 +136,9 @@ async def on_message(message): # receiving messages
     if msg.startswith('-never-have-i-ever'):
         await message.channel.send(get_never_have_I_ever())
         
+    if msg.startswith('-horoscope'):
+        sign = msg.split()[1].lower()
+        await message.channel.send(horoscope(sign))
+
 client.run(TOKEN)
 atexit.register(saving_quotes)
