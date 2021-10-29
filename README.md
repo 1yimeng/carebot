@@ -14,3 +14,7 @@ Current available commands:<br />
 -quotes (get random quotes)<br /> 
 -del quotes<br /> 
 -del num<br />
+-poll<br />
+-convo(convo starter)<br />
+-never-have-i-ever<br />
+-horoscope [insert horoscope here]
