@@ -1,6 +1,6 @@
 import discord
 import os
-from pickup import text_list
+from pickup import pickupline
 from dotenv import load_dotenv
 import random
 import funresponses
@@ -57,9 +57,6 @@ async def on_message(message): # receiving messages
         if emoji in msg and message.author.bot:
             await message.add_reaction(emoji)
 
-    # if message.author == client.user:
-    #     return
-
     if msg.startswith('-hello'):
         await message.channel.send('Wassup I am O\'hare! I am a cool smug rabbit and I also care about you ♥.')
     
@@ -70,7 +67,7 @@ async def on_message(message): # receiving messages
         await message.channel.send(embed = embed)
     
     if msg.startswith('-pick me up'):
-        await message.channel.send(random.choice(text_list))
+        await message.channel.send(random.choice(pickupline()))
 
     if any(word in msg for word in love_words):
         await message.channel.send("Love in the air!")
@@ -85,7 +82,7 @@ async def on_message(message): # receiving messages
         await message.channel.send(funresponses.joke())
 
     if msg.startswith('-help'):
-        await message.channel.send('**Current available commands:** \n-hello \n-pick me up \n-depression \n-toast \n-roast \n-joke \n-add quotes [insert quotes] \n-quotes (get random quotes) \n-del quotes \n-del num \n-poll(separate by commas) \n-convo(convo starter) \n-never-have-i-ever \n-horoscope [insert horoscope here]')
+        await message.channel.send('**Current available commands:** \n-hello \n-pick me up \n-depression \n-toast \n-roast \n-joke \n-add quotes [insert quotes] \n-quotes (get random quotes) \n-del quotes \n-del num [insert num here] \n-poll (separate by commas) \n-convo (convo starter) \n-never-have-i-ever \n-horoscope [insert horoscope here]')
 
     if msg.startswith('-add quotes'):
         new_quote = msg.split('-add quotes ', 1)[1]
@@ -111,10 +108,12 @@ async def on_message(message): # receiving messages
             await message.channel.send('There is no quote stored D:')
         else:   
             index = int(msg.split('-del num ', 1)[1])
+            go_delete = quotes[index-1]
             quotes.remove(quotes[index-1])
             if not quotes:
                 await message.channel.send('No more quotes!')
             else:
+                await message.channel.send(f'{go_delete} is deleted.')
                 await message.channel.send('The quotes stored are: ')
                 await message.channel.send("\n".join(quotes))
     
@@ -137,8 +136,11 @@ async def on_message(message): # receiving messages
         await message.channel.send(get_never_have_I_ever())
         
     if msg.startswith('-horoscope'):
-        sign = msg.split()[1].lower()
-        await message.channel.send(horoscope(sign))
+        try:
+            sign = msg.split()[1].lower()
+            await message.channel.send(horoscope(sign))
+        except: 
+            await message.channel.send('Enter your horoscope please!')
 
 client.run(TOKEN)
 atexit.register(saving_quotes)
